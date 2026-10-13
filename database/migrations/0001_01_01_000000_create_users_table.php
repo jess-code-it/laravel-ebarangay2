@@ -11,15 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            $table->foreignId('user_type_id')
+                ->constrained('user_types')
+                ->restrictOnDelete();
+
             $table->rememberToken();
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -34,6 +41,13 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('user_type_id')
+                ->nullable()
+                ->constrained('user_types')
+                ->restrictOnDelete();
         });
     }
 
